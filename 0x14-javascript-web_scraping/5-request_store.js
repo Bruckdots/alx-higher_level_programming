@@ -1,12 +1,18 @@
 #!/usr/bin/node
+const fs = require('fs');
 const request = require('request');
-request(process.argv[2], function (error, response, body) {
-  if (!error) {
-    const results = JSON.parse(body).results;
-    console.log(results.reduce((count, movie) => {
-      return movie.characters.find((character) => character.endsWith('/18/'))
-        ? count + 1
-        : count;
-    }, 0));
+
+const url = process.argv[2] || '';
+const filePath = process.argv[3];
+
+request(url, (err, res, body) => {
+  if (err) {
+    return console.log(err);
   }
+
+  fs.writeFile(filePath, body, 'utf8', (err) => {
+    if (err) {
+      return console.log(err);
+    }
+  });
 });
